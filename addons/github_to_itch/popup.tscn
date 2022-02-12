@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyjbd25tysr1t"]
+
+[ext_resource type="PackedScene" uid="uid://c2mxwc6kxe5m2" path="res://addons/github_to_itch/ui/config.tscn" id="1_vmowg"]
+
+[node name="Control" type="Popup"]
+disable_3d = true
+title = "Github To Itch Config"
+size = Vector2i(373, 816)
+unresizable = false
+borderless = false
+always_on_top = true
+min_size = Vector2i(300, 200)
+
+[node name="Config" parent="." instance=ExtResource( "1_vmowg" )]

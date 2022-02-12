@@ -1,0 +1,140 @@
+name: Publish {PROJECT_NAME} to Itch.io
+
+on:
+ push:
+  branches:
+  - main
+ pull_request:
+  branches:
+  - main
+env:
+ BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }} # Needs to be added through github
+ DISCORD_WEBHOOK: ${{secrets.DISCORD_WEBHOOK}} # Needs to be added through github
+ GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ IS_MAIN: ${{ contains(github.ref, 'main') }}
+ PROJECT_NAME: "{PROJECT_NAME}"
+ ITCH_PROJECT_NAME: "{ITCH_PROJECT_NAME}"
+ ITCH_USERNAME: "{ITCH_USERNAME}"
+
+jobs:
+ CleanArtifacts:
+  # This job clears out the previous artifacts made so you don't run out of space in your github account
+  runs-on: ubuntu-latest
+  steps:
+  - uses: kolpav/purge-artifacts-action@v1
+	with:
+	 token: ${{ secrets.GITHUB_TOKEN }}
+	 expire-in: 1hr
+
+ Export:
+  needs: CleanArtifacts # wait for artifacts to clean before making a new one
+  runs-on: ubuntu-latest
+  steps:
+  - uses: actions/checkout@v2
+  
+  - name: Download + Authorize Godot
+	run: |
+	   curl -L -o godot.zip https://downloads.tuxfamily.org/godotengine/{GODOT_PATH}/Godot_v{GODOT_VERSION}-{GODOT_STATUS}_linux.64.zip
+	   unzip godot.zip
+	   mv Godot_v{GODOT_VERSION}-{GODOT_STATUS}_linux.64 godot
+	   ls
+	   chmod +x godot
+ 
+  - name: Download Export Templates
+	run: |
+	 curl -L -o export_templates.zip https://downloads.tuxfamily.org/godotengine/{GODOT_PATH}/Godot_v{GODOT_VERSION}-{GODOT_STATUS}_export_templates.tpz
+	 unzip export_templates.zip
+  
+  - name: Install Export Templates
+	run: |
+	 mkdir -p ~/.local/share/godot/templates/{GODOT_VERSION}.{GODOT_STATUS}
+	 mv ./templates/* ~/.local/share/godot/templates/{GODOT_VERSION}.{GODOT_STATUS}
+  
+{EXPORTS_FROM_GODOT}
+  - uses: actions/upload-artifact@v2
+	with:
+	 name: exports
+	 path: exports
+  
+ Release:
+  needs: Export
+  if: ${{ contains(github.ref, 'main') }}
+  runs-on: ubuntu-latest
+  steps:
+	- uses: actions/checkout@v2
+   
+	- name: Version
+	  id: tag_version
+	  uses: mathieudutour/github-tag-action@v5.6
+	  with:
+	   github_token: ${{ secrets.GITHUB_TOKEN }}
+	
+	- name: Verify Tag
+	  if: ${{ !steps.tag_version.outputs.new_tag }}
+	  run: exit 1
+	
+	- name: Download Exports
+	  uses: actions/download-artifact@v2
+	  with:
+	   name: exports
+	   path: exports
+	
+	- name: Zip
+	  run: zip -r release-${{ steps.tag_version.outputs.new_tag }}.zip exports
+	
+	- name: Create Github Release
+	  id: create_release
+	  uses: actions/create-release@v1
+	  env:
+	   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+	  with:
+	   tag_name: ${{ steps.tag_version.outputs.new_tag }}
+	   release_name: Release ${{ steps.tag_version.outputs.new_tag }}
+	   body: ${{ steps.tag_version.outputs.changelog }}
+	
+	- name: Upload Release Artifact
+	  uses: actions/upload-release-asset@v1
+	  env:
+	   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+	  with:
+	   upload_url: ${{ steps.create_release.outputs.upload_url }}
+	   asset_path: ./release-${{ steps.tag_version.outputs.new_tag }}.zip
+	   asset_name: release-${{ steps.tag_version.outputs.new_tag }}.zip
+	   asset_content_type: application/zip
+	
+	- uses: frdrwrt/write-to-file@v1.3
+	  with:
+	   filepath: ./VERSION.txt
+	   content: ${{ steps.tag_version.outputs.new_version }}
+	   mode: 0655
+	
+	- uses: actions/upload-artifact@v2
+	  with:
+	   name: VERSION
+	   path: ./VERSION.txt
+ 
+ Publish:
+  needs: Release
+  if: ${{ contains(github.ref, 'main') }}
+  runs-on: ubuntu-latest
+  steps:
+	- uses: actions/download-artifact@v2
+	
+	- name: Download + Authorize Butler
+	  run: |
+	   curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/LATEST/archive/default
+	   unzip butler.zip
+	   chmod +x butler
+	   ./butler -V
+	
+	- name: Login To Butler
+	  run: ./butler login
+	
+{UPLOADS_TO_ITCH}
+ Cleanup:
+  needs: [Export, Release, Publish]
+  runs-on: ubuntu-latest
+  steps:
+	- uses: geekyeggo/delete-artifact@v1
+	  with:
+	   name: VERSION

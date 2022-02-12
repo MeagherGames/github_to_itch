@@ -1,0 +1,40 @@
+  Notify:
+	needs: [Export, Release, Publish]
+	if: ${{ always() }}
+	env:
+	  DID_PREV_JOBS_SUCCEED: ${{ contains(needs.Export.result, 'success' ) && contains(needs.Release.result, 'success' ) && contains(needs.Publish.result, 'success' ) }}
+	runs-on: ubuntu-latest
+	steps:
+	  - uses: actions/download-artifact@v2
+		if: ${{ env.IS_MAIN && env.DID_PREV_JOBS_SUCCEED == 'true' }}
+		with:
+		  name: VERSION
+
+	  - uses: juliangruber/read-file-action@v1
+		if: ${{ env.IS_MAIN && env.DID_PREV_JOBS_SUCCEED == 'true' }}
+		id: version
+		with:
+		  trim: true
+		  path: ./VERSION.txt
+
+	  - name: Send Discord Success Message
+		if: ${{ env.IS_MAIN && env.DID_PREV_JOBS_SUCCEED == 'true' }}
+		env:
+		  VERSION: '${{ steps.version.outputs.content }}'
+		  COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+		  ITCH_URL: 'https://${{env.ITCH_USERNAME}}.itch.io/${{env.ITCH_PROJECT_NAME}}'
+		run: |
+		  curl --verbose -L $DISCORD_WEBHOOK \
+			--header 'Content-Type: application/json' \
+			--data "{\"content\": \":white_check_mark: $PROJECT_NAME \`$VERSION\` has **published**!\n**Play**: $ITCH_URL\n**commit**: \`$COMMIT_MESSAGE\`\"}"
+	  
+	  - name: Send Discord Failure Message
+		if: ${{ env.IS_MAIN && env.DID_PREV_JOBS_SUCCEED != 'true' }}
+		env:
+		  COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+		run: |
+		  curl --verbose -L $DISCORD_WEBHOOK \
+			--header 'Content-Type: application/json' \
+			--data "{\"content\": \":warning: $PROJECT_NAME workflow has **failed**!\n**Job**: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID\n**commit**: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/commit/$GITHUB_SHA \`$COMMIT_MESSAGE\`\"}"
+	  
+	  
