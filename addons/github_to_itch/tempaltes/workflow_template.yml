@@ -13,8 +13,6 @@ env:
  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  IS_MAIN: ${{ contains(github.ref, 'main') }}
  PROJECT_NAME: "{PROJECT_NAME}"
- ITCH_PROJECT_NAME: "{ITCH_PROJECT_NAME}"
- ITCH_USERNAME: "{ITCH_USERNAME}"
 
 jobs:
  CleanArtifacts:

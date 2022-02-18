@@ -19,7 +19,7 @@ var export_template:String = """  - name: Export {PLATFORM}
 	
 """.replace("\t", "    ")
 var uploads_template:String = """	- name: Push {PLATFORM} to Itch
-	  run: ./butler push {EXPORT_PATH} $ITCH_USERNAME/$ITCH_PROJECT_NAME:{ITCH_PLATFORM} --userversion-file ./VERSION/VERSION.txt
+	  run: ./butler push {EXPORT_PATH} {ITCH_USERNAME}/{ITCH_PROJECT_NAME}:{ITCH_PLATFORM} --userversion-file ./VERSION/VERSION.txt
 	
 """.replace("\t", "    ")
 
@@ -69,13 +69,17 @@ func exports() -> String:
 
 func uploads() -> String:
 	var exports = get_exports()
+	var ITCH_USERNAME = ProjectSettings.get_setting("github_to_itch/config/itch_username")
+	var ITCH_PROJECT_NAME = ProjectSettings.get_setting("github_to_itch/config/itch_project_name")
 	
 	var res:PackedStringArray
 	for export in exports:
 		res.append(uploads_template.format({
 			PLATFORM = export.platform,
 			EXPORT_PATH = "./" + export.export_path.get_base_dir(),
-			ITCH_PLATFORM = ITCH_PLATFORM_MAP[export.platform]
+			ITCH_PLATFORM = ITCH_PLATFORM_MAP[export.platform],
+			ITCH_USERNAME = ITCH_USERNAME.to_lower(),
+			ITCH_PROJECT_NAME = ITCH_PROJECT_NAME.to_lower()
 		}))
 	
 	return "".join(res)

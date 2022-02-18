@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://bk128k0tftsey"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8hn3d"]
+bg_color = Color(0.262745, 0.262745, 0.262745, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[node name="Info" type="HBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -1001.0
+offset_bottom = -574.0
+rect_min_size = Vector2(26, 26)
+size_flags_horizontal = 0
+size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+modulate = Color(1, 1, 1, 0.4)
+offset_right = 26.0
+offset_bottom = 26.0
+rect_min_size = Vector2(26, 26)
+mouse_filter = 2
+size_flags_vertical = 9
+theme_override_styles/panel = SubResource( "StyleBoxFlat_8hn3d" )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Panel/MarginContainer"]
+offset_right = 26.0
+offset_bottom = 26.0
+size_flags_vertical = 1
+text = "?"
+horizontal_alignment = 1
+vertical_alignment = 1

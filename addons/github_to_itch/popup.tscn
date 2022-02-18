@@ -5,7 +5,8 @@
 [node name="Control" type="Popup"]
 disable_3d = true
 title = "Github To Itch Config"
-size = Vector2i(373, 816)
+size = Vector2i(578, 816)
+visible = true
 unresizable = false
 borderless = false
 always_on_top = true
