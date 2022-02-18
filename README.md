@@ -1,5 +1,5 @@
 # Github To Itch (Godot 4.0)
-This addon automatically generates a workflow to publish your game to your itch.io project. Great for use in jams so you can have your playable code live within a couple minutes of pushing to github.
+This addon automatically generates a github workflow to publish your game to your itch.io project. Great for use in jams so you can have your playable code live within a couple minutes of pushing to github.
 
 # Setup ⚙️
 When enabling the addon a window will popup with instructions on how to setup your `BUTLER_API_KEY` so you can actually push to itch.
