@@ -4,7 +4,7 @@ This addon automatically generates a github workflow to publish your game to you
 # Setup ⚙️
 1. When enabling the addon a window will popup with instructions on how to setup your `BUTLER_API_KEY` so you can actually push to itch.
 2. You'll also need to configure your Itch Username and Project Name in the popup window so butler will push to the correct account and project.
-3. Create an export preset in `Project > Export` and the addon will add it to your workflow.
+3. Create an export preset in `Project > Export` if you don't have one and the addon will add it to your workflow.
 4. :tada: You're ready to go, whenever you push to your `main` branch this workflow will publish to itch.io
 
     To edit the username, or project name go to `Project > Tools > Github to Itch Config` or in your project settings under `github_to_itch/config`
