@@ -9,6 +9,12 @@ You'll also need to configure your Itch Username and Project Name in the popup w
 
 If you want to edit the username, or project name for itch the dialog can be found in `Project > Tools > Github to Itch Config` or in your project settings under `github_to_itch/config`
 
+# How it works
+When you create an export template that has `runnable` set to `true` this will automatically adjust your github workflow to export and upload that to itch.io with the proper channel.
+The workflow uses semantic versioning based on your commit messages to automatically handle version number updates.
+https://github.com/angular/angular.js/blob/master/DEVELOPERS.md#-git-commit-guidelines
+It also creates a release on your github repo, useful for keeping working copies of your exports.
+
 ## Customization
 The workflow template file is found in `addons/github_to_itch/templates` You can modify that file to change the workflow if needed (maybe you want to change the branch to a `release` branch or something)
 
