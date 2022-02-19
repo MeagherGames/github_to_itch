@@ -6,10 +6,14 @@ extends RefCounted
 const workflow_template_path:String = "res://addons/github_to_itch/tempaltes/workflow_template.yml"
 const export_template_path:String = "res://addons/github_to_itch/tempaltes/export.yml"
 
-const ITCH_PLATFORM_MAP = {
+const ITCH_CHANNEL_MAP = {
 	"HTML5": "web",
 	"Windows Desktop": "win",
-	# TODO add the rest
+	"Android": "android",
+	"iOS": "ios", # not an official channel of itch
+	"Linux/X11": "linux",
+	"macOS": "mac",
+	"UWP": "uwp" # not an official channel of itch
 }
 
 var export_template:String = """  - name: Export {PLATFORM}
@@ -19,7 +23,7 @@ var export_template:String = """  - name: Export {PLATFORM}
 	
 """.replace("\t", "    ")
 var uploads_template:String = """	- name: Push {PLATFORM} to Itch
-	  run: ./butler push {EXPORT_PATH} {ITCH_USERNAME}/{ITCH_PROJECT_NAME}:{ITCH_PLATFORM} --userversion-file ./VERSION/VERSION.txt
+	  run: ./butler push {EXPORT_PATH} {ITCH_USERNAME}/{ITCH_PROJECT_NAME}:{ITCH_CHANNEL} --userversion-file ./VERSION/VERSION.txt
 	
 """.replace("\t", "    ")
 
@@ -77,7 +81,7 @@ func uploads() -> String:
 		res.append(uploads_template.format({
 			PLATFORM = export.platform,
 			EXPORT_PATH = "./" + export.export_path.get_base_dir(),
-			ITCH_PLATFORM = ITCH_PLATFORM_MAP[export.platform],
+			ITCH_CHANNEL = ITCH_CHANNEL_MAP[export.platform],
 			ITCH_USERNAME = ITCH_USERNAME.to_lower(),
 			ITCH_PROJECT_NAME = ITCH_PROJECT_NAME.to_lower()
 		}))
