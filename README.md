@@ -1,4 +1,4 @@
-# Github To Itch (Godot 4.0)
+# <img src="./icon.png" style="height:1em;" /> Github To Itch (Godot 4.0)
 This addon automatically generates a github workflow to publish your game to your itch.io project. Great for use in jams so you can have your playable code live within a couple minutes of pushing to github.
 
 # Setup ⚙️
