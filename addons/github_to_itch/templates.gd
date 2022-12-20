@@ -3,8 +3,8 @@ extends RefCounted
 
 ## Helper script to render the workflow yml file
 
-const workflow_template_path:String = "res://addons/github_to_itch/tempaltes/workflow_template.yml"
-const export_template_path:String = "res://addons/github_to_itch/tempaltes/export.yml"
+const workflow_template_path:String = "res://addons/github_to_itch/templates/workflow_template.yml"
+const export_template_path:String = "res://addons/github_to_itch/templates/export.yml"
 
 const ITCH_CHANNEL_MAP = {
 	"HTML5": "web",
