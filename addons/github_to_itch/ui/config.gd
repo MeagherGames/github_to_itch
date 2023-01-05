@@ -1,8 +1,8 @@
 @tool
 extends ScrollContainer
 
-@onready var itch_username = $Config/Control/ItchInfo/MarginContainer/GridContainer/Username
-@onready var itch_project_name = $Config/Control/ItchInfo/MarginContainer/GridContainer/ProjectName
+@onready var itch_username = get_node("%Username")
+@onready var itch_project_name = get_node("%ProjectName")
 
 func _ready():
 	if ProjectSettings.has_setting("github_to_itch/config/itch_username"):

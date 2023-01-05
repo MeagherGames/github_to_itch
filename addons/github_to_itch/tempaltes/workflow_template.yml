@@ -32,9 +32,9 @@ jobs:
   
   - name: Download + Authorize Godot
 	run: |
-	   curl -L -o godot.zip https://downloads.tuxfamily.org/godotengine/{GODOT_PATH}/Godot_v{GODOT_VERSION}-{GODOT_STATUS}_linux.64.zip
+	   curl -L -o godot.zip https://downloads.tuxfamily.org/godotengine/{GODOT_PATH}/Godot_v{GODOT_VERSION}-{GODOT_STATUS}_linux.x86_64.zip
 	   unzip godot.zip
-	   mv Godot_v{GODOT_VERSION}-{GODOT_STATUS}_linux.64 godot
+	   mv Godot_v{GODOT_VERSION}-{GODOT_STATUS}_linux.x86_64 godot
 	   ls
 	   chmod +x godot
  
@@ -45,8 +45,8 @@ jobs:
   
   - name: Install Export Templates
 	run: |
-	 mkdir -p ~/.local/share/godot/templates/{GODOT_VERSION}.{GODOT_STATUS}
-	 mv ./templates/* ~/.local/share/godot/templates/{GODOT_VERSION}.{GODOT_STATUS}
+	 mkdir -p ~/.local/share/godot/export_templates/{GODOT_VERSION}.{GODOT_STATUS}
+	 mv ./templates/* ~/.local/share/godot/export_templates/{GODOT_VERSION}.{GODOT_STATUS}
   
 {EXPORTS_FROM_GODOT}
   - uses: actions/upload-artifact@v2
