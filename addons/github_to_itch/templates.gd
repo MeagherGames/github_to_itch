@@ -3,8 +3,8 @@ extends RefCounted
 
 ## Helper script to render the workflow yml file
 
-const workflow_template_path:String = "res://addons/github_to_itch/templates/workflow_template.yml"
-const export_template_path:String = "res://addons/github_to_itch/templates/export.yml"
+const workflow_template_path:String = "res://addons/github_to_itch/tempaltes/workflow_template.yml"
+const export_template_path:String = "res://addons/github_to_itch/tempaltes/export.yml"
 
 const ITCH_CHANNEL_MAP = {
 	"HTML5": "web",
@@ -18,8 +18,8 @@ const ITCH_CHANNEL_MAP = {
 
 var export_template:String = """  - name: Export {PLATFORM}
 	run: |
-	 mkdir -p {EXPORT_PATH}
-	 ./godot --path ./project.godot --export "{NAME}" {EXPORT_FILE}
+	 mkdir -p ./{EXPORT_PATH}
+	 ./godot --headless --path ./ --export-release "{NAME}" ./{EXPORT_FILE}
 	
 """.replace("\t", "    ")
 var uploads_template:String = """	- name: Push {PLATFORM} to Itch
@@ -104,10 +104,8 @@ func uploads() -> String:
 	return "".join(res)
 
 func workflow() -> String:
-	var file := File.new()
-	file.open(workflow_template_path, File.READ)
+	var file := FileAccess.open(workflow_template_path, FileAccess.READ)
 	var workflow_template = file.get_as_text()
-	file.close()
 	
 	var version_info = get_version_info()
 	var GODOT_PATH = version_info.version
